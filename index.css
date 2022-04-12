@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Arvo:wght@700&family=Source+Sans+Pro:wght@300;400&display=swap');
+
+body{
+    font-family:'Source Sans Pro', sans-serif;
+    padding:0;
+    background-color: #233D4D;
+}
+
+h1{
+    font-family:'Arvo', serif;
+    color: #FE7F2D;
+    font-size:2.5em;
+}
+
+#title{
+    display:inline-block;
+    width:25%;
+    padding-left:1%;
+}
+
+nav{
+    display:inline-block;
+    text-align:right;
+    width:70%;
+}
+
+nav a {
+    padding-left:10px;
+    padding-right:10px;
+    color:#F4F3EE;
+}
+
+nav a:hover{
+    color: #FE7F2D;
+}
+
+#resultsTable{
+    display:none;
+    border-collapse: separate;
+    border-spacing: 50px 0;
+}
+
+form{
+    padding-left:1%;
+}
+
+#searchZipButton{
+    background-color: #85D8BF;
+    border:none;
+    color: #000000;
+    border-radius:3px;
+    padding-left:5px;
+    padding-right:5px;
+    padding-top:2px;
+    padding-bottom:2px;
+    font-family:'Source Sans Pro', sans-serif;
+}
+
+#searchZipButton:hover{
+    background-color:#619B8A;
+}
+
+table{
+    padding-top:20px;
+    color: #F4F3EE;
+}
