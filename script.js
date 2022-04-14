@@ -1,5 +1,4 @@
 var museumArr = [];
-
 function getLatLong(){
     event.preventDefault();
     var lat;
@@ -51,7 +50,7 @@ function processData(data){
     var table = document.getElementById('resultsTable');
     table.style.display = "block";
     for(var i = 0; i < data.length; i++){
-        var row = table.insertRow(1);
+        var row = table.insertRow(i+1);
         var cell1 = row.insertCell(0);
         cell1.innerHTML = data[i]["name"];
         var cell2 = row.insertCell(1);
@@ -81,5 +80,33 @@ function processData(data){
         }catch(error){
             cell4.innerHTML = "Unknown";
         }
+        var cell5 = row.insertCell(4);
+        cell5.innerHTML = "Save Museum";
+        cell5.id = i;
+        cell5.onclick = function(event){
+            console.log("hit event");
+            var rowNumber = parseInt(event.target.id) + 1;
+            console.log(rowNumber);
+            var cells = document.getElementById("resultsTable").rows[rowNumber].cells;
+            var museumName = cells[0].innerHTML;
+            var address = cells[1].innerHTML;
+            var rating = cells[2].innerHTML;
+            museumInfo = [museumName, address, rating];
+            saveMuseum(museumInfo)
+        }
+    }
+}
+
+async function saveMuseum(info){
+    console.log("In save museum");
+    try {
+        const docRef = await AudioScheduledSourceNode(collection(db, "myMuseums"), {
+            name: info[0],
+            address: info[1],
+            rating: info[2]
+        });
+        console.log("Document written with ID: ", docRef.id);
+    }catch (e){
+        console.log("Error adding document");
     }
 }
