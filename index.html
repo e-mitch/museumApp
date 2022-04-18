@@ -11,7 +11,7 @@
       <h1 id="title">Museum Finder</h1>
       <nav>
           <a href="#museumSearchDiv">Find Museums</a>
-          <a id="#myMuseumsDiv">My Museums</a>
+          <a href="#myMuseumsDiv">My Museums</a>
       </nav>
     </header>
     <form>
@@ -177,30 +177,28 @@ function processData(data){
         }
         var cell5 = row.insertCell(4);
         cell5.innerHTML = "Save Museum";
-        cell5.id = i;
         cell5.classList.add("saveButton");
+        cell5.id = i;
         saveButtons.push(cell5);
+        setUpListener(cell5, i)
     }
-    setUpListeners(saveButtons);
+    //setUpListeners(saveButtons);
 }
 
-  function setUpListeners(sButtons){
-      for(var counter = 0; counter < sButtons.length; counter++){
-          var rowNumber = parseInt(sButtons[counter].id) + 1;
-          var cells = document.getElementById("resultsTable").rows[rowNumber].cells;
-          var museumName = cells[0].innerHTML;
-          var address = cells[1].innerHTML;
+  function setUpListener(sButtons, i){
+    var cells = document.getElementById("resultsTable").rows[i+1].cells;
+    var museumName = cells[0].innerHTML;
+    var address = cells[1].innerHTML;
 
-          sButtons[counter].addEventListener("click", async(e) => {
-              e.preventDefault();
-              try {
-                  await saveMuseum(museumName, address);
-              } catch (error){
-              console.log(error);
-              }
-          });
-      }
-  }
+    sButtons.addEventListener("click", async(e) => {
+        e.preventDefault();
+        try {
+            await saveMuseum(museumName, address);
+        } catch (error){
+        console.log(error);
+        }
+    });
+    }
     </script>
   </body>
 </html>

@@ -64,3 +64,22 @@ table{
     padding-top:20px;
     color: #F4F3EE;
 }
+
+.saveButton{
+    text-align:center;
+    background-color:#619B8A;
+}
+
+.saveButton:hover{
+    color:#FE7F2D;
+}
+
+h2{
+    color:#FE7F2D;
+    text-align:right;
+    font-family:'Arvo', serif;
+}
+
+th{
+    font-size:1.25em;
+}
