@@ -109,7 +109,7 @@
           alert("Please enter a 5-digit zipcode.")
           return;
       }
-      const llURL = "https://us-east1-final-project-346820.cloudfunctions.net/getCoords2?zip=" + zipcode;
+      const llURL = "https://us-east1-final-project-346820.cloudfunctions.net/getCoordinates?zip=" + zipcode;
       fetch(llURL)
               .then(function (response) {
                   return response.json();
