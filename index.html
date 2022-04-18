@@ -64,8 +64,8 @@
 
       export const db = getFirestore(); 
 
-      export const saveMuseum = (name, address) =>
-        addDoc(collection(db, "myMuseums"), {name,address});
+      export const saveMuseum = (Name, Address) =>
+        addDoc(collection(db, "myMuseums"), {Name,Address});
       
       export const onGetMuseums = (callback) =>
         onSnapshot(collection(db, "myMuseums"), callback);
