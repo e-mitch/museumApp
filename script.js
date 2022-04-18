@@ -1,4 +1,4 @@
-var museumArr = [];
+/*var museumArr = [];
 function getLatLong(){
     event.preventDefault();
     var lat;
@@ -20,14 +20,14 @@ function getLatLong(){
                 //console.log(myJson);
                 lat = myJson['lat'];
                 lng = myJson['lng'];
-                getMuseums(lat, lng, zipcode);
+                findMuseums(lat, lng, zipcode);
             })
             .catch(function (error) {
                 console.log("Error: " + error);
             });
 }
 
-function getMuseums(lat, lng, zip){
+function findMuseums(lat, lng, zip){
     //console.log("Lat: ", lat);
     //console.log("Lng: ", lng);
     //console.log("Zip: ", zip);
@@ -47,6 +47,7 @@ function getMuseums(lat, lng, zip){
 
 function processData(data){
     console.log(data);
+    var saveButtons = [];
     var table = document.getElementById('resultsTable');
     table.style.display = "block";
     for(var i = 0; i < data.length; i++){
@@ -83,30 +84,30 @@ function processData(data){
         var cell5 = row.insertCell(4);
         cell5.innerHTML = "Save Museum";
         cell5.id = i;
-        cell5.onclick = function(event){
-            console.log("hit event");
-            var rowNumber = parseInt(event.target.id) + 1;
-            console.log(rowNumber);
-            var cells = document.getElementById("resultsTable").rows[rowNumber].cells;
-            var museumName = cells[0].innerHTML;
-            var address = cells[1].innerHTML;
-            var rating = cells[2].innerHTML;
-            museumInfo = [museumName, address, rating];
-            saveMuseum(museumInfo)
-        }
+        cell5.classList.add("saveButton");
+        saveButtons.push(cell5);
     }
+    console.log(saveButtons[0].id);
+    setUpListeners(saveButtons);
 }
 
-async function saveMuseum(info){
-    console.log("In save museum");
-    try {
-        const docRef = await AudioScheduledSourceNode(collection(db, "myMuseums"), {
-            name: info[0],
-            address: info[1],
-            rating: info[2]
+function setUpListeners(sButtons){
+    console.log(sButtons);
+    for(var counter = 0; counter < sButtons.length; counter++){
+        console.log(sButtons[counter].id);
+        var rowNumber = parseInt(sButtons[counter].id) + 1;
+        var cells = document.getElementById("resultsTable").rows[rowNumber].cells;
+        var museumName = cells[0].innerHTML;
+        var address = cells[1].innerHTML;
+        console.log(museumName);
+        console.log(address);
+        sButtons[counter].addEventListener("click", async(e) => {
+            e.preventDefault();
+            try {
+                await saveMuseum(museumName, address);
+            } catch (error){
+            console.log(error);
+            }
         });
-        console.log("Document written with ID: ", docRef.id);
-    }catch (e){
-        console.log("Error adding document");
     }
-}
+}*/

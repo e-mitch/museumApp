@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset = "utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Museum Finder</title>
-    <link rel="stylesheet" type="text/css" href="index.css"/>
+    <link rel="stylesheet" type="text/css" href="index.css">
   </head>
   <body>
-      <header>
-        <h1 id="title">Museum Finder</h1>
-        <nav>
-            <a href="index.html">Find Museums</a>
-            <a href="myMuseums.html">My Museums</a>
-        </nav>
-      </header>
+    <header>
+      <h1 id="title">Museum Finder</h1>
+      <nav>
+          <a href="#museumSearchDiv">Find Museums</a>
+          <a id="#myMuseumsDiv">My Museums</a>
+      </nav>
+    </header>
     <form>
       <input type="text" placeholder="zipcode" id="zipcodeField">
-      <button id="searchZipButton" onclick="getLatLong()">Find Museums!</button>
+      <button id="searchZipButton">Find Museums!</button>
     </form>
-    <div>
+    <div id = "museumSearchDiv">
+      <h2>Search Museums</h2>
         <table id="resultsTable">
             <tr id="tableHeaders">
                 <th>Museum Name</th>
@@ -29,47 +30,177 @@
             </tr>
         </table>
     </div>
-    <script src = "script.js"></script>
+    <div id="myMuseumsDiv">
+      <h2>My Museums</h2>
+      <table id="myMuseumsTable">
+      </table>
+    </div>
+    <script src="script.js"></script>
     <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
-      import { getFirestore, collection, doc, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"
-      // TODO: Add SDKs for Firebase products that you want to use
-      // https://firebase.google.com/docs/web/setup#available-libraries
-    
-      // Your web app's Firebase configuration
-      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-app.js";
+
+      import {
+          getFirestore,
+          collection,
+          getDocs,
+          onSnapshot,
+          addDoc,
+          deleteDoc,
+          doc,
+          getDoc,
+          updateDoc,
+      } from "https://www.gstatic.com/firebasejs/9.6.2/firebase-firestore.js";
+
       const firebaseConfig = {
-        apiKey: "AIzaSyBLFPNtuB2b14SSjo_MqIvD7xgvDLKaulc",
-        authDomain: "museumapp-b308f.firebaseapp.com",
-        projectId: "museumapp-b308f",
-        storageBucket: "museumapp-b308f.appspot.com",
-        messagingSenderId: "714957279093",
-        appId: "1:714957279093:web:1583bc0b98304d9def0d3c",
-        measurementId: "G-MN0R6CL4XM"
+        apiKey: "AIzaSyA5zBmkaOIObKWhvgdGiJwsmMX3QXyssjY",
+        authDomain: "final-v2-347015.firebaseapp.com",
+        projectId: "final-v2-347015",
+        storageBucket: "final-v2-347015.appspot.com",
+        messagingSenderId: "744120202203",
+        appId: "1:744120202203:web:1965d67cc7f3afacb7adfe"
       };
-    
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
-      //const db = getFirestore(app);
-      const firestore = getFirestore();
-      const museum = doc(firestore, 'Museums/2022-4-15');
-      async function writeMuseum() {
-        const docData = {
-          name: "The Smithsonian",
-          address: "The National Mall",
-          rating: 5,
-        };
-        try {
-          await setDoc(museum, docData);
-          console.log("Value has been written");
-        } catch (error){
-          console.log("Error: ");
-        }
+
+      export const app = initializeApp(firebaseConfig);
+
+      export const db = getFirestore(); 
+
+      export const saveMuseum = (name, address) =>
+        addDoc(collection(db, "myMuseums"), {name,address});
+      
+      export const onGetMuseums = (callback) =>
+        onSnapshot(collection(db, "myMuseums"), callback);
+
+      export const getMuseums = () => getDocs(collection(db, "myMuseums"));
+
+      const myMuseumsTable = document.getElementById("myMuseumsTable");
+      const searchMuseumsDiv = document.getElementById("museumSearchDiv");
+      var saving = false;
+      window.addEventListener("DOMContentLoaded", async(e) => {
+        onGetMuseums((querySnapshot) => {
+          myMuseumsTable.innerHTML = "";
+          var headerRow = myMuseumsTable.insertRow(0);
+          var nameHeader = document.createElement("TH");
+          nameHeader.innerHTML = "Name";
+          headerRow.appendChild(nameHeader);
+          var addressHeader = document.createElement("TH");
+          addressHeader.innerHTML = "Address";
+          headerRow.appendChild(addressHeader);
+          querySnapshot.forEach((doc) => {
+            const museum = doc.data();
+            var museumRow = myMuseumsTable.insertRow(1);
+            var nameCell = museumRow.insertCell(0);
+            nameCell.innerHTML = museum.Name;
+            var addressCell = museumRow.insertCell(1);
+            addressCell.innerHTML = museum.Address;
+          });
+        })
+      })
+
+      var searchButton = document.getElementById("searchZipButton");
+      searchZipButton.addEventListener("click", function() {
+        event.preventDefault();
+      var lat;
+      var lng;
+      var zipcode = document.getElementById("zipcodeField").value;
+      if(isNaN(zipcode-1)){
+          alert("Please enter a valid numeric zipcode.");
+          return;
+      } else if (zipcode.length != 5){
+          alert("Please enter a 5-digit zipcode.")
+          return;
       }
-      writeMuseum();
-    </script> 
+      const llURL = "https://us-east1-final-project-346820.cloudfunctions.net/getCoords2?zip=" + zipcode;
+      fetch(llURL)
+              .then(function (response) {
+                  return response.json();
+              })
+              .then(function (myJson) {
+                  lat = myJson['lat'];
+                  lng = myJson['lng'];
+                  findMuseums(lat, lng, zipcode);
+              })
+              .catch(function (error) {
+                  console.log("Error: " + error);
+              });
+      })
+    
+
+function findMuseums(lat, lng, zip){
+    const dataUrl = "https://us-east1-final-project-346820.cloudfunctions.net/getData?lat="+lat+"&lon="+lng+"&zip="+zip;
+    fetch(dataUrl)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (myJson) {
+                const data = myJson;
+                processData(data);
+            })
+            .catch(function (error) {
+                console.log("Error: " + error);
+            });
+}
+
+function processData(data){
+    var saveButtons = [];
+    var table = document.getElementById('resultsTable');
+    table.style.display = "block";
+    for(var i = 0; i < data.length; i++){
+        var row = table.insertRow(i+1);
+        var cell1 = row.insertCell(0);
+        cell1.innerHTML = data[i]["name"];
+        var cell2 = row.insertCell(1);
+        try{
+            cell2.innerHTML = data[i]["address"];
+        } catch (error){
+            cell2.innerHTML = "Unknown";
+        }
+        var cell3 = row.insertCell(2);
+        try{
+            cell3.innerHTML = data[i]["rating"]
+        }catch(error){
+            cell2.innerHTML = "Unknown";
+        }
+        var cell4 = row.insertCell(3);
+        try{
+            var open = data[i]["openNow"];
+            if (open == undefined){
+                cell4.innerHTML = "Unknown";
+            } else {
+                if(open == true){
+                    cell4.innerHTML = "Open!"
+                } else if (open == false){
+                    cell4.innerHTML = "Closed"
+                }
+            }
+        }catch(error){
+            cell4.innerHTML = "Unknown";
+        }
+        var cell5 = row.insertCell(4);
+        cell5.innerHTML = "Save Museum";
+        cell5.id = i;
+        cell5.classList.add("saveButton");
+        saveButtons.push(cell5);
+    }
+    setUpListeners(saveButtons);
+}
+
+  function setUpListeners(sButtons){
+      for(var counter = 0; counter < sButtons.length; counter++){
+          var rowNumber = parseInt(sButtons[counter].id) + 1;
+          var cells = document.getElementById("resultsTable").rows[rowNumber].cells;
+          var museumName = cells[0].innerHTML;
+          var address = cells[1].innerHTML;
+
+          sButtons[counter].addEventListener("click", async(e) => {
+              e.preventDefault();
+              try {
+                  await saveMuseum(museumName, address);
+              } catch (error){
+              console.log(error);
+              }
+          });
+      }
+  }
+    </script>
   </body>
 </html>
